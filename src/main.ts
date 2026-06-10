@@ -1,22 +1,45 @@
-import { invoke } from "@tauri-apps/api/core";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
+let chatgptWindow: WebviewWindow | null = null;
+let deepseekWindow: WebviewWindow | null = null;
 
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("chatgpt-btn")?.addEventListener("click", openChatGPT);
+  document.getElementById("deepseek-btn")?.addEventListener("click", openDeepSeek);
+});
+
+function createWindow(label: string, url: string): WebviewWindow {
+  const win = new WebviewWindow(label, { url });
+  win.once("tauri://created", () => {});
+  win.once("tauri://error", () => {
+    if (label === "chatgpt") chatgptWindow = null;
+    else deepseekWindow = null;
+  });
+  return win;
+}
+
+async function openChatGPT() {
+  if (!chatgptWindow) {
+    chatgptWindow = createWindow("chatgpt", "https://chat.openai.com");
+  } else {
+    try {
+      await chatgptWindow.show();
+      await chatgptWindow.setFocus();
+    } catch {
+      chatgptWindow = createWindow("chatgpt", "https://chat.openai.com");
+    }
   }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
-});
+async function openDeepSeek() {
+  if (!deepseekWindow) {
+    deepseekWindow = createWindow("deepseek", "https://chat.deepseek.com");
+  } else {
+    try {
+      await deepseekWindow.show();
+      await deepseekWindow.setFocus();
+    } catch {
+      deepseekWindow = createWindow("deepseek", "https://chat.deepseek.com");
+    }
+  }
+}
