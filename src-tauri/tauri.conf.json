@@ -10,12 +10,11 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "withGlobalTauri": true,
     "windows": [
       {
         "title": "SEB Launcher",
-        "width": 480,
-        "height": 620,
+        "width": 1200,
+        "height": 800,
         "center": true
       }
     ],
