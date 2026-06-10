@@ -32,3 +32,10 @@ jobs:
         with:
           name: tauri-windows-build
           path: src-tauri/target/release/bundle/
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: src-tauri/target/release/bundle/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
